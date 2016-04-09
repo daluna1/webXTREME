@@ -2,14 +2,16 @@
 # Author: Tommy Klein
 # Affiliation: Agroscope, Institute for Sustainability Sciences ISS (Zurich, Switzerland)
 # Date: July 2015
-# Project: webEXTREME
+# Project: webXTREME
 #----------------------------------------------------------------------------------------
 
 library(shiny)
 library(shinyBS)
 library(DT)
-library(lubridate)
 library(dygraphs)
+library(shinythemes)
+
+library(lubridate)
 
 # Generate potential start dates (2015 is arbitrary)
 dates.start <- ymd("2015-01-01") + days(0:364)
@@ -94,6 +96,7 @@ introduction.main.reference5 <-
 
 ### UI starts here
 shinyUI(fluidPage(
+    theme = shinytheme("united"),
     img(src = "logo.png", height = 70, width = 330),  # logo
     titlePanel(app.name.short),  # app name
     sidebarLayout(

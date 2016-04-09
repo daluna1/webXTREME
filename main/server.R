@@ -2,20 +2,27 @@
 # Author: Tommy Klein
 # Affiliation: Agroscope, Institute for Sustainability Sciences ISS (Zurich, Switzerland)
 # Date: July 2015
-# Project: webEXTREME
+# Project: webXTREME
 #----------------------------------------------------------------------------------------
 
-library(dplyr)
+# Generic packages
 library(ggplot2)
-library(shiny)  # developer version
-library(shinyBS)
+library(foreach)
+
+library(shiny)
+# Extend shiny capabilities
+library(shinyBS)  # add helpers
+library(DT)  # js based interactive tables
+library(dygraphs)  # js based interactive plots
+library(xts)  # required by dygraphs
+library(shinythemes)  # modify default theme
+
+# Data manipulation
+library(dplyr)
 library(tidyr)
 library(lubridate)
-library(foreach)
-library(DT)  # developer version (install htmlwigdet developer version)
-library(dygraphs)
-library(xts)
 
+# Source external modules for index computation
 source("./attachments/ET0.R")  # functions to compute the reference ET
 source("./attachments/SM.R")  # functions to compute soil moisture
 
