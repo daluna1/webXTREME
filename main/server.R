@@ -151,7 +151,7 @@ shinyServer(function(input, output, session) {
     })
 
     output$ui.criterion <- renderText({
-        # Create critterion string (underlying + threshold)
+        # Create criterion string (underlying + threshold)
         underlying <- input$UNDERLYING
         threshold <- input$THRESHOLD
         if(!is.null(underlying) && !is.null(threshold)) {
