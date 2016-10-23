@@ -1,11 +1,11 @@
-Package: tkweather
+Package: modextreme
 Type: Package
-Title: Utils for weather parameters estimation
+Title: MODEXTREME (MODelling vegetation response to EXTREMe Events)
 Version: 0.1
-Date: 2016-02-21
+Date: 2016-10-23
 Author: Tommy Klein
 Maintainer: Tommy Klein <tklein@consult-tk.com>
-Description: Set of functions to estimate various weather parameters (ET0,...)
-License: Private
+Description: This package contains most functions implemented by Tommy Klein
+(Agroscope, Institute for Sustainability Sciences ISS, Zurich Switzerland) over
+the course of the MODEXTREME project (http://modextreme.org/)
 LazyData: TRUE
-RoxygenNote: 5.0.1

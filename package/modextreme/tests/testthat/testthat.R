@@ -1,5 +1,5 @@
 library(testthat)
-library(tkweather)
+library(modextreme)
 
 # compute.extraterrestrial.radiation
 # test 1 from Allen et al. (1998) p. 47

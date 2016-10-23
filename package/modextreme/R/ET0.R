@@ -1,95 +1,89 @@
-#' compute.extraterrestrial.radiation
+#' Compute the extraterrestrial radiation
 #'
-#' @param doy
-#' @param lat.deg
+#' Compute the extraterrestrial radiation (MJ m-2 day-1) for a given location
+#' and given day.
 #'
-#' @return Ra: extraterrestrial.radiation
-#' @export
+#' Reference:
+#' - Allen, R.G., Raes, D., Smith, M., 1998. Crop Evapotranspiration.
+#'      Guidelines for Computing Crop Water Requirements (No. 56: FAO Irrigation and Drainage Paper).
+#'      Food and Agriculture Organization (FAO) of the United Nations.
+#'
+#' @param doy day of the year (1-366)
+#' @param lat.deg latitude of location in degrees
+#'
+#' @return Ra extraterrestrial radiation (MJ m-2 day-1)
 #'
 #' @examples
+#' compute.extraterrestrial.radiation(doy = 246, lat.deg = -20)
+#'
+#' @export
 compute.extraterrestrial.radiation <- function(doy, lat.deg) {
-    # Computes the extraterrestrial radiation.
-    #
-    # Args:
-    #   doy: day of the year
-    #   lat.deg: latitude of the location (in degrees)
-    #
-    # Returns:
-    #   extraterrestrial radiation (MJ m-2 day-1)
-    #
-    # References:
-    #   - Allen, R.G., Raes, D., Smith, M., 1998. Crop Evapotranspiration.
-    #       Guidelines for Computing Crop Water Requirements (No. 56: FAO Irrigation and Drainage Paper).
-    #       Food and Agriculture Organization (FAO) of the United Nations.
-
-    SolarCst <- 0.082 # MJ m-2 min-1
+    SolarCst <- 0.082
     omegaD <- (2 * pi) / 365.
-    lat.rad <- lat.deg * pi/180.
+    lat.rad <- lat.deg * pi / 180.
     IRelDst <- 1. + 0.033 * cos(omegaD * doy)
     SolDecl <- 0.409 * sin(omegaD * doy - 1.39)
     SunSet  <- acos(-tan(lat.rad) * tan(SolDecl))
     DayLen  <- (24. * 60.)
     Ra <- DayLen / pi * SolarCst * IRelDst *
         (sin(lat.rad) * sin(SolDecl) * SunSet + cos(lat.rad) * cos(SolDecl) * sin(SunSet))
+
     return(Ra)
 }
 
-#' compute.day.length
+#' Compute day length
 #'
-#' @param doy
-#' @param lat.deg
+#' Compute the day length for a given location
+#' and given day.
+#'
+#' @param doy day of the year (1-366)
+#' @param lat.deg latitude of location in degrees
 #'
 #' @return day length (h)
-#' @export
 #'
 #' @examples
+#' compute.day.length(246, -20.)
+#'
+#' @export
 compute.day.length <- function(doy, lat.deg) {
-    # FAO 56 eq 34
-    SolarCst <- 0.082 #MJ m-2 min-1
     omegaD <- (2 * pi) / 365.
     lat.rad <- lat.deg * pi/180.
-    IRelDst <- 1. + 0.033 * cos(omegaD * doy)
     SolDecl <- 0.409 * sin(omegaD * doy - 1.39)
     temp <- pmax(pmin(1, -tan(lat.rad) * tan(SolDecl)), -1)
 
     SunSet  <- acos(temp)
     DayLen  <- (24. / pi) * SunSet
 
-    DayLen
+    return(DayLen)
 }
 
-#' compute.incoming.solar.radiation.Hargreaves
+#' Compute solar radiation based on on the Hargreaves' formula
 #'
-#' @param doy
-#' @param lat.deg
-#' @param tmin.C
-#' @param tmax.C
-#' @param krs
+#' Derive solar radiation based on Tmax and Tmin based on the Hargreaves'
+#' formula.
+#'
+#' References:
+#' - Allen, R.G., Raes, D., Smith, M., 1998. Crop Evapotranspiration.
+#' Guidelines for Computing Crop Water Requirements (No. 56: FAO Irrigation and Drainage Paper).
+#' Food and Agriculture Organization (FAO) of the United Nations.
+#' - Hargreaves, G.H., Samani, Z.A., 1982. Estimating potential evapotranspiration.
+#' Journal of the Irrigation and Drainage Division 108, 225-230
+#'
+#' @param doy day of the year (1-366)
+#' @param lat.deg latitude of location in degrees
+#' @param tmin.C daily minimum temperature (in degrees C,)
+#' @param tmax.C daily maximum temperature (in degrees C)
+#' @param krs coastal coefficient (-)
 #'
 #' @return incoming solar radiation (MJ m-2 d-1)
-#' @export
 #'
 #' @examples
+#' compute.incoming.solar.radiation.Hargreaves(doy = 196, lat.deg = 45.7166667, tmax.C = 26.6,
+#' tmin.C = 14.8, krs = 0.16)
+#'
+#' @export
 compute.incoming.solar.radiation.Hargreaves <- function(doy, lat.deg, tmin.C,
                                                         tmax.C, krs = 0.19) {
-    # Derive solar radiation based on Tmax and Tmin.
-    #
-    # Args:
-    #   doy: day of the year
-    #   lat.deg: latitude of the location (in degrees)
-    #   tmin.C: daily minimum temperature (in degrees C, array)
-    #   tmax.C: daily maximum temperature (in degrees C, array)
-    #   krs: coastal coefficient (-)
-    #
-    # Returns:
-    #   incoming solar radiation (MJ m-2 day-1)
-    #
-    # References:
-    #   - Allen, R.G., Raes, D., Smith, M., 1998. Crop Evapotranspiration.
-    #       Guidelines for Computing Crop Water Requirements (No. 56: FAO Irrigation and Drainage Paper).
-    #       Food and Agriculture Organization (FAO) of the United Nations.
-    #   - Hargreaves, G.H., Samani, Z.A., 1982. Estimating potential evapotranspiration.
-    #       Journal of the Irrigation and Drainage Division 108, 225-230
 
     Ra <- compute.extraterrestrial.radiation(doy, lat.deg)
 
@@ -98,40 +92,33 @@ compute.incoming.solar.radiation.Hargreaves <- function(doy, lat.deg, tmin.C,
     return(Rs)
 }
 
-#' compute.et0.Hargreaves
+#' Compute ET0 with Hargreaves' formula
 #'
-#' @param doy
-#' @param lat.deg
-#' @param tmin.C
-#' @param tmax.C
-#' @param tave.C
+#' Compute ET0 (mm) based on Tmax and Tmin based on the Hargreaves'
+#' formula.
 #'
-#' @return ET0 (mm)
-#' @export
+#' References:
+#' - Allen, R.G., Raes, D., Smith, M., 1998. Crop Evapotranspiration.
+#' Guidelines for Computing Crop Water Requirements (No. 56: FAO Irrigation and Drainage Paper).
+#' Food and Agriculture Organization (FAO) of the United Nations.
+#' - Hargreaves, G.H., Samani, Z.A., 1982. Estimating potential evapotranspiration.
+#' Journal of the Irrigation and Drainage Division 108, 225-230
+#'
+#' @param doy day of the year (1-366)
+#' @param lat.deg latitude of location in degrees
+#' @param tmin.C daily minimum temperature (in degrees C,)
+#' @param tmax.C daily maximum temperature (in degrees C)
+#' @param tave.C daily average temperature (in degrees C)
+#'
+#' @return reference evapotranspiration (ET0 in mm) based on Hargreaves' formula
 #'
 #' @examples
+#'
+#' @export
 compute.et0.Hargreaves <- function(doy, lat.deg, tmin.C,
                                    tmax.C, tave.C = NULL) {
-    # Compute ET0 with Hargreaves function.
-    #
-    # Args:
-    #   doy: day of the year
-    #   lat.deg: latitude of the location (in degrees)
-    #   tmin.C: daily minimum temperature (in degrees C, array)
-    #   tmax.C: daily maximum temperature (in degrees C, array)
-    #   tave.C: daily average temperature (in degrees C, array, optional)
-    #
-    # Returns:
-    #   reference evapotranspiration (ET0) based on Hargreaves' function
-    #
-    # References:
-    #   - Hargreaves, G.H., Samani, Z.A., 1982. Estimating potential evapotranspiration.
-    #       Journal of the Irrigation and Drainage Division 108, 225-230
-
-    # Estimate the average air temperature if not provided
-
-    if (is.null (tave.C)) {
-        tave.C = (tmax.C + tmin.C) / 2.
+    if (is.null(tave.C)) {
+        tave.C <- (tmax.C + tmin.C) / 2.
     }
     latent.heat.vap <- 2.45 # MJ kg-1
     Ra.MJ.m2.day <- compute.extraterrestrial.radiation(doy, lat.deg)
