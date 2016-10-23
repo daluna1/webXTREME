@@ -1,0 +1,11 @@
+Package: tkweather
+Type: Package
+Title: Utils for weather parameters estimation
+Version: 0.1
+Date: 2016-02-21
+Author: Tommy Klein
+Maintainer: Tommy Klein <tklein@consult-tk.com>
+Description: Set of functions to estimate various weather parameters (ET0,...)
+License: Private
+LazyData: TRUE
+RoxygenNote: 5.0.1
